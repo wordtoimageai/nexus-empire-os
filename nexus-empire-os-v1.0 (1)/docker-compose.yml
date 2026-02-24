@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  nexus-orchestrator:
+    build: .
+    container_name: nexus-empire
+    restart: unless-stopped
+    volumes:
+      - ./domains:/app/domains
+      - ./built_sites:/app/built_sites
+      - ./reports:/app/reports
+      - ./.env:/app/.env
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - VERCEL_API_TOKEN=${VERCEL_API_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    command: python3 -m core.orchestrator auto
+
+  # Optional: Web dashboard
+  dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./domains:/app/data
+    depends_on:
+      - nexus-orchestrator
