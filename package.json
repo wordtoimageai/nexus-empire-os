@@ -1,38 +1,31 @@
-#!/bin/bash
-# NEXUS Empire - Bulk Deployment Script
-
-echo "🚀 NEXUS Empire Deployment"
-echo "=========================="
-
-# 1. Initialize Terraform
-echo "📦 Initializing infrastructure..."
-cd infrastructure/terraform
-terraform init
-
-# 2. Plan
-echo "📋 Planning changes..."
-terraform plan -out=tfplan
-
-# 3. Apply (auto-approve for CI/CD)
-echo "🏗️  Applying infrastructure..."
-terraform apply tfplan
-
-cd ../..
-
-# 4. Build sites
-echo "⚙️  Building sites..."
-python3 core/orchestrator.py build 10
-
-# 5. Deploy to Vercel
-echo "🌐 Deploying to Vercel..."
-for site in built_sites/*/; do
-  if [ -d "$site" ]; then
-    domain=$(basename "$site")
-    echo "Deploying $domain..."
-    cd "$site"
-    vercel --prod --yes
-    cd ../..
-  fi
-done
-
-echo "✅ Deployment complete!"
+{
+  "name": "nexus-empire-os",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "lucide-react": "^0.474.0",
+    "swr": "^2.3.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.0"
+  }
+}
